@@ -6,11 +6,10 @@ using TMPro;
 public class TimeGame : MonoBehaviour
 {
     //keep the spacebar press
-    //have the player press spacebar to start new round
     //countdown to number reveal
 
-    float roundStartDelayTime = 3f;
-
+    public TMP_Text numberToGuess;
+    public float roundStartDelayTime = 3f;
     public Vector2 timeRange = new Vector2(3, 11);
 
     float roundStartTime;
@@ -23,14 +22,22 @@ public class TimeGame : MonoBehaviour
         //print("Press the spacebar once you think the allotted time is up.");
         min = Mathf.CeilToInt(timeRange.x);
         max = Mathf.CeilToInt(timeRange.y);
-        Invoke("SetNewRandomTime", roundStartDelayTime);
+        numberToGuess.text = "";
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && roundStarted)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            InputReceived();
+            if (roundStarted)
+            {
+                InputReceived();
+                return;
+            }
+            if (!roundStarted)
+            {
+                Invoke("SetNewRandomTime", roundStartDelayTime);
+            }
         }
     }
 
@@ -42,9 +49,9 @@ public class TimeGame : MonoBehaviour
         float error = Mathf.Abs(waitTime - playerWaitTime);
 
         //tell the player in UI
-        print("You waited for " + playerWaitTime + " seconds. That's " + error + " seconds off.");
+        print("Waited for " + playerWaitTime + " seconds. " + error + " seconds off.");
         print(GenerateMessage(error));
-        Invoke("SetNewRandomTime", roundStartDelayTime);
+        numberToGuess.text = "";
     }
 
     string GenerateMessage(float error)
@@ -75,7 +82,8 @@ public class TimeGame : MonoBehaviour
         roundStartTime = Time.time;
         roundStarted = true;
         //show the player in UI
-        print(waitTime + " seconds.");
+        //print(waitTime + " seconds.");
+        numberToGuess.text = "" + waitTime;
     }
 
 }

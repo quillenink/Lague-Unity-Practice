@@ -5,10 +5,10 @@ using TMPro;
 
 public class TimeGame : MonoBehaviour
 {
-    //keep the spacebar press
     //countdown to number reveal
+    //some juicy animations for press start and result?
 
-    public TMP_Text numberToGuess;
+    public TMP_Text numberToGuess, timeWaitedText, amountOffText, spaceToStartText, resultText;
     public float roundStartDelayTime = 3f;
     public Vector2 timeRange = new Vector2(3, 11);
 
@@ -19,10 +19,12 @@ public class TimeGame : MonoBehaviour
 
     void Start()
     {
-        //print("Press the spacebar once you think the allotted time is up.");
         min = Mathf.CeilToInt(timeRange.x);
         max = Mathf.CeilToInt(timeRange.y);
         numberToGuess.text = "";
+        timeWaitedText.text = "";
+        amountOffText.text = "";
+        resultText.text = "";
     }
 
     void Update()
@@ -48,10 +50,12 @@ public class TimeGame : MonoBehaviour
         //make this sensitive to "too soon" and too long
         float error = Mathf.Abs(waitTime - playerWaitTime);
 
-        //tell the player in UI
-        print("Waited for " + playerWaitTime + " seconds. " + error + " seconds off.");
+        timeWaitedText.text = "Waited for " + playerWaitTime + " seconds.";
+        amountOffText.text = error + " seconds off.";
+        resultText.text = GenerateMessage(error);
         print(GenerateMessage(error));
         numberToGuess.text = "";
+        spaceToStartText.text = "Press the spacebar to start.";
     }
 
     string GenerateMessage(float error)
@@ -81,9 +85,11 @@ public class TimeGame : MonoBehaviour
         waitTime = Random.Range(min, max);
         roundStartTime = Time.time;
         roundStarted = true;
-        //show the player in UI
-        //print(waitTime + " seconds.");
         numberToGuess.text = "" + waitTime;
+        timeWaitedText.text = "";
+        amountOffText.text = "";
+        spaceToStartText.text = "";
+        resultText.text = "";
     }
 
 }

@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Assets\Episode 4\EP4.cs" />
     <Compile Include="Assets\Episode 6\TimeGame.cs" />
+    <Compile Include="Assets\Episode 6\TextFade.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

@@ -5,17 +5,18 @@ using TMPro;
 
 public class TimeGame : MonoBehaviour
 {
-    //countdown to number reveal
+
     //some juicy animations for press start and result?
 
     public TMP_Text numberToGuess, timeWaitedText, amountOffText, spaceToStartText, resultText;
-    public float roundStartDelayTime = 3f;
+    public GameObject countdownLine;
+    public float roundStartDelayTime = 3f, maxScale = 30f;
     public Vector2 timeRange = new Vector2(3, 11);
 
-    float roundStartTime;
+    float roundStartTime, delayCountdown, scaleIncrement, xScale = 1f;
     int waitTime;
     int min, max;
-    bool roundStarted;
+    bool roundStarted, roundStartDelay;
 
     void Start()
     {
@@ -25,11 +26,27 @@ public class TimeGame : MonoBehaviour
         timeWaitedText.text = "";
         amountOffText.text = "";
         resultText.text = "";
+        delayCountdown = roundStartDelayTime;
+        scaleIncrement = maxScale / roundStartDelayTime;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (roundStartDelay)
+        {
+            if(delayCountdown <= 0f)
+            {
+                SetNewRandomTime();
+                xScale = 1f;
+                roundStartDelay = false;
+                delayCountdown = roundStartDelayTime;
+            }
+            delayCountdown -= Time.deltaTime;
+            xScale += scaleIncrement * Time.deltaTime;
+            countdownLine.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && !roundStartDelay)
         {
             if (roundStarted)
             {
@@ -38,7 +55,13 @@ public class TimeGame : MonoBehaviour
             }
             if (!roundStarted)
             {
-                Invoke("SetNewRandomTime", roundStartDelayTime);
+                roundStartDelay = true;
+                timeWaitedText.text = "";
+                amountOffText.text = "";
+                resultText.text = "";
+                spaceToStartText.text = "";
+                countdownLine.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
+                countdownLine.SetActive(true);
             }
         }
     }
@@ -47,13 +70,11 @@ public class TimeGame : MonoBehaviour
     {
         roundStarted = false;
         float playerWaitTime = Time.time - roundStartTime;
-        //make this sensitive to "too soon" and too long
         float error = Mathf.Abs(waitTime - playerWaitTime);
 
         timeWaitedText.text = "Waited for " + playerWaitTime + " seconds.";
         amountOffText.text = error + " seconds off.";
         resultText.text = GenerateMessage(error);
-        print(GenerateMessage(error));
         numberToGuess.text = "";
         spaceToStartText.text = "Press the spacebar to start.";
     }
@@ -82,14 +103,11 @@ public class TimeGame : MonoBehaviour
 
     void SetNewRandomTime()
     {
+        countdownLine.SetActive(false);
         waitTime = Random.Range(min, max);
         roundStartTime = Time.time;
         roundStarted = true;
         numberToGuess.text = "" + waitTime;
-        timeWaitedText.text = "";
-        amountOffText.text = "";
-        spaceToStartText.text = "";
-        resultText.text = "";
     }
 
 }

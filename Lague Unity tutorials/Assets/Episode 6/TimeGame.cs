@@ -6,12 +6,11 @@ using TMPro;
 public class TimeGame : MonoBehaviour
 {
 
-    //some juicy animations for press start and result?
-
     public TMP_Text numberToGuess, timeWaitedText, amountOffText, spaceToStartText, resultText;
     public GameObject countdownLine;
     public float roundStartDelayTime = 3f, maxScale = 30f;
     public Vector2 timeRange = new Vector2(3, 11);
+    public Animator resultAnim;
 
     float roundStartTime, delayCountdown, scaleIncrement, xScale = 1f;
     int waitTime;
@@ -75,6 +74,7 @@ public class TimeGame : MonoBehaviour
         timeWaitedText.text = "Waited for " + playerWaitTime + " seconds.";
         amountOffText.text = error + " seconds off.";
         resultText.text = GenerateMessage(error);
+        StartCoroutine(ResultAnimation());
         numberToGuess.text = "";
         spaceToStartText.text = "Press the spacebar to start.";
     }
@@ -108,6 +108,13 @@ public class TimeGame : MonoBehaviour
         roundStartTime = Time.time;
         roundStarted = true;
         numberToGuess.text = "" + waitTime;
+    }
+
+    IEnumerator ResultAnimation()
+    {
+        resultAnim.Play("Result_Display");
+        yield return new WaitForSeconds(2f);
+        resultAnim.Play("Result_Idle");
     }
 
 }
